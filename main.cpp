@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <string>
 #include <vector>
+#include <ctime>
 
 using namespace std;
 
@@ -11,6 +12,8 @@ const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 const string WINDOW_TITLE = "Snake game";
 const int STEP = 10;
+const int DOT_SIZE = 10;
+const int DELAY_TIME = 50;
 
 void initSDL(SDL_Window* &window, SDL_Renderer* &renderer);
 void logSDLError(std::ostream& os,
@@ -27,7 +30,7 @@ struct Dot
     int y;
     int x0;
     int y0;
-    int size = 20; // kích thước dot
+    int size = DOT_SIZE; // kích thước dot
     int step = STEP;
     int directionX = step;
     int directionY = 0;
@@ -39,7 +42,7 @@ struct Dot
     }
     void draw ()
     {
-       SDL_SetRenderDrawColor(renderer,0,255,0,255);
+       SDL_SetRenderDrawColor(renderer,0,255,0,255);  // green
        SDL_Rect dot = {x,y,size,size};
        SDL_RenderFillRect(renderer,&dot);
     }
@@ -131,20 +134,79 @@ struct Snake
         }
     }
 
+    void update ()
+    {
+        Dot tail;
+        tail.x = body[body.size()-1].x0;
+        tail.y = body[body.size()-1].y0;
+        body.push_back(tail);
+    }
+
+
 };
+
+int random (int min, int max)
+{
+    return min+rand()%(max-min+1);
+}
+
+struct Food
+{
+    int x;
+    int y;
+    int size = DOT_SIZE;
+    void random_generate ()
+    {
+        x = 10*(random(2,61));
+        y = 10*(random(4,45));
+    }
+    void draw_food ()
+    {
+       SDL_SetRenderDrawColor(renderer,255,69,0,255);  // orange
+       SDL_Rect dot = {x,y,size,size};
+       SDL_RenderFillRect(renderer,&dot);
+    }
+    bool isEatenBy (Snake snake)
+    {
+       if (x==snake.body[0].x && y==snake.body[0].y) return true;
+       else return false;
+    }
+
+};
+
+struct Game
+{
+    int score;
+    int high_score;
+
+    void draw_frame ()
+    {
+      SDL_Rect frame_up = {0,0,SCREEN_WIDTH,40};
+      SDL_Rect frame_left = {0,0,20,SCREEN_HEIGHT};
+      SDL_Rect frame_down = {0,SCREEN_HEIGHT-20,SCREEN_WIDTH,20};
+      SDL_Rect frame_right = {SCREEN_WIDTH-20,0,20,SCREEN_HEIGHT};
+      SDL_SetRenderDrawColor(renderer,0,0,255,255);
+      SDL_RenderFillRect(renderer,&frame_up);
+      SDL_RenderFillRect(renderer,&frame_down);
+      SDL_RenderFillRect(renderer,&frame_left);
+      SDL_RenderFillRect(renderer,&frame_right);
+    }
+};
+
 
 void init_game (Snake &snake)
 {
-    Dot d0(40,10);   // head
-    Dot d1(30,10);
-    Dot d2(20,10);
-    Dot d3(10,10);
+    Dot d0(60,50);   // head
+    Dot d1(50,50);
+    Dot d2(40,50);
+    Dot d3(30,50);
     snake.body.push_back(d0);
     snake.body.push_back(d1);
     snake.body.push_back(d2);
     snake.body.push_back(d3);
 
 }
+
 int main (int argc, char* argv[])
 {
     initSDL(window, renderer);
@@ -152,18 +214,32 @@ int main (int argc, char* argv[])
     SDL_SetRenderDrawColor(renderer,255,255,255,255);
     SDL_RenderClear(renderer);
 
+    srand(time(0));
+    Game new_game;
     Snake snake;
     init_game(snake);
-    snake.draw();
+    new_game.score = 0;
+    //snake.draw();
+    Food food;
+    food.random_generate();
 
-    while (snake.body[0].inside(0,0,SCREEN_WIDTH,SCREEN_HEIGHT)==true)
+
+    while (snake.body[0].inside(20,40,SCREEN_WIDTH-20,SCREEN_HEIGHT-20)==true)
     {
          snake.move();
+         if (food.isEatenBy(snake)==true) {
+            ++new_game.score;
+            cout << "Score: " << new_game.score << endl;
+            snake.update();  // tăng kích thước rắn
+            food.random_generate();   // random thức ăn
+         }
          SDL_SetRenderDrawColor(renderer,255,255,255,255);
          SDL_RenderClear(renderer);
+         new_game.draw_frame();
          snake.draw();
+         food.draw_food();
          SDL_RenderPresent(renderer);
-         SDL_Delay(30);
+         SDL_Delay(DELAY_TIME);
 
          SDL_Event e;
          if (SDL_PollEvent(&e)==0) continue;
