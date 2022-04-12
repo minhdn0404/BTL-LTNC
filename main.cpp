@@ -14,6 +14,10 @@ const string WINDOW_TITLE = "Snake game";
 const int STEP = 10;
 const int DOT_SIZE = 10;
 const int DELAY_TIME = 50;
+const int FRAME_UP = 40;
+const int FRAME_DOWN = 20;
+const int FRAME_LEFT = 20;
+const int FRAME_RIGHT = 20;
 
 void initSDL(SDL_Window* &window, SDL_Renderer* &renderer);
 void logSDLError(std::ostream& os,
@@ -199,16 +203,15 @@ struct Food
 {
     int x;
     int y;
-    int size = DOT_SIZE;
     void random_generate ()
     {
-        x = 10*(random(2,61));
-        y = 10*(random(4,45));
+        x = DOT_SIZE*(random(FRAME_LEFT/DOT_SIZE, (SCREEN_WIDTH-FRAME_RIGHT-DOT_SIZE)/DOT_SIZE));
+        y = DOT_SIZE*(random(FRAME_UP/DOT_SIZE, (SCREEN_HEIGHT-FRAME_DOWN-DOT_SIZE)/DOT_SIZE));
     }
     void draw_food ()
     {
        SDL_SetRenderDrawColor(renderer,255,69,0,255);  // orange
-       SDL_Rect dot = {x,y,size,size};
+       SDL_Rect dot = {x,y,DOT_SIZE,DOT_SIZE};
        SDL_RenderFillRect(renderer,&dot);
     }
     bool is_eaten_by (Snake snake)
@@ -226,10 +229,10 @@ struct Game
 
     void draw_frame ()
     {
-      SDL_Rect frame_up = {0,0,SCREEN_WIDTH,40};
-      SDL_Rect frame_left = {0,0,20,SCREEN_HEIGHT};
-      SDL_Rect frame_down = {0,SCREEN_HEIGHT-20,SCREEN_WIDTH,20};
-      SDL_Rect frame_right = {SCREEN_WIDTH-20,0,20,SCREEN_HEIGHT};
+      SDL_Rect frame_up = {0,0,SCREEN_WIDTH,FRAME_UP};
+      SDL_Rect frame_left = {0,0,FRAME_LEFT,SCREEN_HEIGHT};
+      SDL_Rect frame_down = {0,SCREEN_HEIGHT-FRAME_DOWN,SCREEN_WIDTH,FRAME_DOWN};
+      SDL_Rect frame_right = {SCREEN_WIDTH-FRAME_RIGHT,0,FRAME_RIGHT,SCREEN_HEIGHT};
       SDL_SetRenderDrawColor(renderer,0,0,255,255);
       SDL_RenderFillRect(renderer,&frame_up);
       SDL_RenderFillRect(renderer,&frame_down);
@@ -239,7 +242,8 @@ struct Game
 
     bool is_Over (Snake &snake)
     {
-       if ( (snake.body[0].inside(20,40,SCREEN_WIDTH-20,SCREEN_HEIGHT-20)==false) || (snake.eat_itself() == true) ) return true;
+       if ( (snake.body[0].inside(FRAME_LEFT,FRAME_UP,SCREEN_WIDTH-FRAME_RIGHT,SCREEN_HEIGHT-FRAME_DOWN)==false)
+             || (snake.eat_itself() == true) ) return true;
        // || (snake.eat_itself() == true)
        else return false;
     }
@@ -248,10 +252,10 @@ struct Game
 
 void init_game (Snake &snake)
 {
-    Dot d0(60,50);   // head
-    Dot d1(50,50);
-    Dot d2(40,50);
-    Dot d3(30,50);
+    Dot d0(FRAME_LEFT+DOT_SIZE*4,FRAME_UP+2*DOT_SIZE);   // head
+    Dot d1(FRAME_LEFT+DOT_SIZE*3,FRAME_UP+2*DOT_SIZE);
+    Dot d2(FRAME_LEFT+DOT_SIZE*2,FRAME_UP+2*DOT_SIZE);
+    Dot d3(FRAME_LEFT+DOT_SIZE,FRAME_UP+2*DOT_SIZE);
     snake.body.push_back(d0);
     snake.body.push_back(d1);
     snake.body.push_back(d2);
