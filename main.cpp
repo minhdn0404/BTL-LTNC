@@ -81,6 +81,10 @@ struct Dot
 struct Snake
 {
     vector<Dot> body ;
+    bool right;
+    bool left;
+    bool up;
+    bool down;
 
     void draw ()
     {
@@ -119,10 +123,43 @@ struct Snake
              body[i].y0 = body[i].y;
              switch (direct)
              {
-                 case 6: body[i].turn_right(); break;
-                 case 4 : body[i].turn_left(); break;
-                 case 8 : body[i].turn_up(); break;
-                 case 2 : body[i].turn_down(); break;
+                 case 6:
+                 {
+                     if (left == 0) {
+                        body[i].turn_right();
+                        left = 0; right = 1; up = 0; down =0;
+                        break;
+                     }
+                     else break;
+                 }
+                 case 4 :
+                 {
+                     if (right == 0) {
+                         body[i].turn_left();
+                         left = 1; right = 0; up = 0; down =0;
+                         break;
+                     }
+                     else break;
+                 }
+                 case 8 :
+                 {
+                     if (down == 0) {
+                         body[i].turn_up();
+                         left = 0; right = 0; up = 1; down =0;
+                         break;
+                     }
+                     else break;
+                 }
+                 case 2 :
+                 {
+                     if (up == 0) {
+                         body[i].turn_down();
+                         left = 0; right = 0; up = 0; down =1;
+                         break;
+                     }
+                     else break;
+                 }
+                 default: break;
              }
            }
            else {
@@ -142,6 +179,14 @@ struct Snake
         body.push_back(tail);
     }
 
+    bool eat_itself ()
+    {
+        for (int i=2; i<body.size(); ++i)
+        {
+            if (body[0].x == body[i].x && body[0].y == body[i].y) return true;
+        }
+        return false;
+    }
 
 };
 
@@ -166,7 +211,7 @@ struct Food
        SDL_Rect dot = {x,y,size,size};
        SDL_RenderFillRect(renderer,&dot);
     }
-    bool isEatenBy (Snake snake)
+    bool is_eaten_by (Snake snake)
     {
        if (x==snake.body[0].x && y==snake.body[0].y) return true;
        else return false;
@@ -191,6 +236,13 @@ struct Game
       SDL_RenderFillRect(renderer,&frame_left);
       SDL_RenderFillRect(renderer,&frame_right);
     }
+
+    bool is_Over (Snake &snake)
+    {
+       if ( (snake.body[0].inside(20,40,SCREEN_WIDTH-20,SCREEN_HEIGHT-20)==false) || (snake.eat_itself() == true) ) return true;
+       // || (snake.eat_itself() == true)
+       else return false;
+    }
 };
 
 
@@ -204,7 +256,10 @@ void init_game (Snake &snake)
     snake.body.push_back(d1);
     snake.body.push_back(d2);
     snake.body.push_back(d3);
-
+    snake.up = 0;
+    snake.down = 0;
+    snake.right = 0;
+    snake.left = 0;
 }
 
 int main (int argc, char* argv[])
@@ -224,10 +279,10 @@ int main (int argc, char* argv[])
     food.random_generate();
 
 
-    while (snake.body[0].inside(20,40,SCREEN_WIDTH-20,SCREEN_HEIGHT-20)==true)
+    while (new_game.is_Over(snake) == false)
     {
          snake.move();
-         if (food.isEatenBy(snake)==true) {
+         if (food.is_eaten_by(snake)==true) {
             ++new_game.score;
             cout << "Score: " << new_game.score << endl;
             snake.update();  // tăng kích thước rắn
@@ -257,8 +312,7 @@ int main (int argc, char* argv[])
          //snake.move();
 
     }
-
-    cout << "QUITED";
+    cout << "Game Over";
 
     waitUntilKeyPressed();
     quitSDL(window, renderer);
