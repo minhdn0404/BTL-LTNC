@@ -1,9 +1,9 @@
 
 
-
-
 #include <iostream>
 #include <SDL.h>
+#include <SDL_ttf.h>
+#include <SDL_image.h>
 #include <string>
 #include <vector>
 #include <ctime>
@@ -16,10 +16,10 @@ const string WINDOW_TITLE = "Snake game";
 const int STEP = 10;
 const int DOT_SIZE = 10;
 const int DELAY_TIME = 50;
-const int FRAME_UP = 40;
-const int FRAME_DOWN = 20;
-const int FRAME_LEFT = 20;
-const int FRAME_RIGHT = 20;
+const int FRAME_UP = 70;
+const int FRAME_DOWN = 50;
+const int FRAME_LEFT = 50;
+const int FRAME_RIGHT = 50;
 const int MAX_SCORE = 60;   // for snake vs snake mode
 
 void initSDL(SDL_Window* &window, SDL_Renderer* &renderer);
@@ -27,9 +27,12 @@ void logSDLError(std::ostream& os,
                  const std::string &msg, bool fatal = false);
 void quitSDL(SDL_Window* window, SDL_Renderer* renderer);
 void waitUntilKeyPressed();
+SDL_Texture* loadFromRenderedText( string textureText, SDL_Color textColor);
+SDL_Texture* loadTexture( string path );
 
 SDL_Window* window;
 SDL_Renderer* renderer;
+TTF_Font *gFont = nullptr;
 
 struct Dot
 {
@@ -266,14 +269,54 @@ struct Food
 struct Game
 {
     int high_score;
+    SDL_Texture* play_background;
+    SDL_Texture* texture_font;
 
-    void draw_frame ()
+    Game()
+    {
+        play_background = nullptr;
+        texture_font = nullptr;
+    }
+    ~Game()
+    {
+         SDL_DestroyTexture(play_background);
+         play_background = nullptr;
+         SDL_DestroyTexture(texture_font);
+         texture_font = nullptr;
+    }
+
+    void draw_play_background ()
+    {
+        if (play_background==nullptr) play_background = loadTexture("Background/dark.jpg");
+        SDL_RenderCopy(renderer,play_background,nullptr,nullptr);
+    }
+
+    void draw_score(const int score, Uint8 r, Uint8 g, Uint8 b, int x, int y, int w, int h )
+    {
+        string s = "Score: " + to_string(score);
+        gFont = TTF_OpenFont( "Font/zxzxzx.ttf", 28 );
+        SDL_Color textColor = {r, g, b};
+        texture_font = loadFromRenderedText(s, textColor);
+        SDL_Rect rect = {x,y,w,h};
+        SDL_RenderCopy(renderer,texture_font,nullptr,&rect);
+    }
+
+    void draw_banner (Uint8 r, Uint8 g, Uint8 b, string title)
+    {
+        gFont = TTF_OpenFont( "Font/pacfont.ttf", 28 );
+        SDL_Color textColor = {r, g, b};
+        texture_font = loadFromRenderedText(title, textColor);
+        SDL_Rect rect = {SCREEN_WIDTH/15,10,250,50};
+        SDL_RenderCopy(renderer,texture_font,nullptr,&rect);
+    }
+
+    void draw_frame (Uint8 r, Uint8 g, Uint8 b)
     {
       SDL_Rect frame_up = {0,0,SCREEN_WIDTH,FRAME_UP};
       SDL_Rect frame_left = {0,0,FRAME_LEFT,SCREEN_HEIGHT};
       SDL_Rect frame_down = {0,SCREEN_HEIGHT-FRAME_DOWN,SCREEN_WIDTH,FRAME_DOWN};
       SDL_Rect frame_right = {SCREEN_WIDTH-FRAME_RIGHT,0,FRAME_RIGHT,SCREEN_HEIGHT};
-      SDL_SetRenderDrawColor(renderer,172, 249, 255, 255);
+      SDL_SetRenderDrawColor(renderer,r, g, b, 255);
       SDL_RenderFillRect(renderer,&frame_up);
       SDL_RenderFillRect(renderer,&frame_down);
       SDL_RenderFillRect(renderer,&frame_left);
@@ -300,7 +343,6 @@ struct Game
     }
 };
 
-
 void init_game (Snake &snake,int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4)
 {
     Dot d0(x1,y1);   // head
@@ -321,7 +363,7 @@ void classic ()
 {
     Game new_game;
     Snake snake;
-    init_game(snake,60,50,50,50,40,50,30,50);
+    init_game(snake,FRAME_LEFT+40,FRAME_UP+10,FRAME_LEFT+30,FRAME_UP+10,FRAME_LEFT+20,FRAME_UP+10,FRAME_LEFT+10,FRAME_UP+10);
     snake.score = 0;
     Food food;
     food.random_generate();
@@ -337,7 +379,10 @@ void classic ()
          }
          SDL_SetRenderDrawColor(renderer,255,255,255,255);
          SDL_RenderClear(renderer);
-         new_game.draw_frame();
+         new_game.draw_play_background();
+         new_game.draw_frame(48, 92, 240);
+         new_game.draw_banner(29, 243, 10, "Classic");
+         new_game.draw_score(snake.score,255,0,0,SCREEN_WIDTH/2,20,200,50);
          snake.draw(0,255,0);
          food.draw_food();
          SDL_RenderPresent(renderer);
@@ -365,7 +410,7 @@ void modern ()
 {
     Game new_game;
     Snake snake;
-    init_game(snake,60,50,50,50,40,50,30,50);
+    init_game(snake,FRAME_LEFT+40,FRAME_UP+10,FRAME_LEFT+30,FRAME_UP+10,FRAME_LEFT+20,FRAME_UP+10,FRAME_LEFT+10,FRAME_UP+10);
     snake.score = 0;
     Food food;
     food.random_generate();
@@ -382,7 +427,10 @@ void modern ()
          }
          SDL_SetRenderDrawColor(renderer,255,255,255,255);
          SDL_RenderClear(renderer);
-         new_game.draw_frame();
+         new_game.draw_play_background();
+         new_game.draw_frame(48, 92, 240);
+         new_game.draw_banner(29, 243, 10, "Modern");
+         new_game.draw_score(snake.score,255,0,0,SCREEN_WIDTH/2,20,200,50);
          snake.draw(0,255,0);
          food.draw_food();
          SDL_RenderPresent(renderer);
@@ -410,8 +458,8 @@ void snake_vs_snake ()
     Game new_game;
     Snake snake1;
     Snake snake2;
-    init_game(snake1,60,50,50,50,40,50,30,50);
-    init_game(snake2,60,100,50,100,40,100,30,100);
+    init_game(snake1,FRAME_LEFT+40,FRAME_UP+10,FRAME_LEFT+30,FRAME_UP+10,FRAME_LEFT+20,FRAME_UP+10,FRAME_LEFT+10,FRAME_UP+10);
+    init_game(snake2,FRAME_LEFT+40,FRAME_UP+60,FRAME_LEFT+30,FRAME_UP+60,FRAME_LEFT+20,FRAME_UP+60,FRAME_LEFT+10,FRAME_UP+60);
     snake1.score = 0;
     snake2.score = 0;
     Food food;
@@ -435,9 +483,13 @@ void snake_vs_snake ()
          }
          SDL_SetRenderDrawColor(renderer,255,255,255,255);
          SDL_RenderClear(renderer);
-         new_game.draw_frame();
-         snake1.draw(0,255,0);
-         snake2.draw(115, 36, 254);
+         new_game.draw_play_background();
+         new_game.draw_frame(48, 92, 240);
+         new_game.draw_banner(29, 243, 10, "Snake vs Snake");
+         new_game.draw_score(snake1.score,255, 162, 0,SCREEN_WIDTH/2,10,200,30);
+         new_game.draw_score(snake2.score,45, 212, 199,SCREEN_WIDTH/2,40,200,30);
+         snake1.draw(255, 162, 0);
+         snake2.draw(45, 212, 199);
          food.draw_food();
          SDL_RenderPresent(renderer);
          SDL_Delay(DELAY_TIME);
@@ -473,6 +525,37 @@ void snake_vs_snake ()
     cout << "Game Over";
 }
 
+void intro ()
+{
+    SDL_Texture* intro_background = loadTexture("Background/intro.jpg");
+    gFont = TTF_OpenFont( "Font/race1.ttf", 28 );
+    SDL_Color textColor = {0, 200, 0};
+    SDL_Texture* title = loadFromRenderedText("SNAKE",textColor);
+    SDL_Rect rect = {SCREEN_WIDTH/3-30,0,300,100};
+
+    int i = 10;
+    while (rect.y<=SCREEN_HEIGHT/3-40)
+    {
+        rect.y +=i;
+        SDL_SetRenderDrawColor(renderer,0,0,0,0);
+        SDL_RenderClear(renderer);
+        SDL_RenderCopy(renderer,intro_background,nullptr,nullptr);
+        SDL_RenderCopy(renderer,title,nullptr,&rect);
+        SDL_RenderPresent(renderer);
+        SDL_Delay(50);
+    }
+
+    intro_background = loadTexture("Background/play_button.png"); // 246, 249, 11 (RGB)
+    SDL_Rect rect1 = {SCREEN_WIDTH/3+5,SCREEN_HEIGHT/3+60,220,100};
+    SDL_RenderCopy(renderer,intro_background,nullptr,&rect1);
+    SDL_RenderPresent(renderer);
+
+    SDL_DestroyTexture(intro_background);
+    intro_background = nullptr;
+    SDL_DestroyTexture(title);
+    title = nullptr;
+}
+
 int main (int argc, char* argv[])
 {
     initSDL(window, renderer);
@@ -481,6 +564,8 @@ int main (int argc, char* argv[])
     SDL_RenderClear(renderer);
 
     srand(time(0));
+
+    intro();
 
     cout << "Choose mode: " << endl;
     cout << "1: Classic" << endl;
@@ -502,19 +587,46 @@ int main (int argc, char* argv[])
           break;
         }
     }
-    //classic();
 
-    //modern();
-
-    //snake_vs_snake();
 
     waitUntilKeyPressed();
     quitSDL(window, renderer);
     return 0;
 }
 
-void logSDLError(std::ostream& os,
-                 const std::string &msg, bool fatal)
+SDL_Texture* loadTexture( string path )
+{
+    SDL_Texture* newTexture = nullptr;
+    SDL_Surface* loadedSurface = IMG_Load( path.c_str() );
+    if ( loadedSurface == nullptr )
+        cout << "Unable to load image " << path << " SDL_image Error: "
+             << IMG_GetError() << endl;
+    else {
+        SDL_SetColorKey (loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface -> format,255,255,255 ));
+
+        newTexture = SDL_CreateTextureFromSurface( renderer, loadedSurface );
+        if( newTexture == nullptr )
+            cout << "Unable to create texture from " << path << " SDL Error: "
+                 << SDL_GetError() << endl;
+        SDL_FreeSurface( loadedSurface );
+    }
+    return newTexture;
+}
+
+SDL_Texture* loadFromRenderedText( string textureText, SDL_Color textColor)
+{
+    SDL_Texture* mTexture = nullptr;
+    SDL_Surface* textSurface = TTF_RenderText_Solid (gFont, textureText.c_str(), textColor);
+    if (textSurface == nullptr) cout << "Unable to create text surface! " << endl << TTF_GetError();
+    else {
+        // Create texture from surface pixels
+        mTexture = SDL_CreateTextureFromSurface(renderer,textSurface);
+        if (mTexture == nullptr) cout << "Unable to create texture from rendered text!" << endl << SDL_GetError();
+    }
+    return mTexture;
+}
+
+void logSDLError(std::ostream& os, const std::string &msg, bool fatal)
 {
     os << msg << " Error: " << SDL_GetError() << std::endl;
     if (fatal) {
@@ -544,6 +656,19 @@ void initSDL(SDL_Window* &window, SDL_Renderer* &renderer)
 
     if (renderer == nullptr) logSDLError(std::cout, "CreateRenderer", true);
 
+    else
+    {
+        //Initialize renderer color
+        SDL_SetRenderDrawColor(renderer, 255,255,255,255 );
+
+         //Initialize PNG loading
+        int imgFlags = IMG_INIT_PNG;
+        if( !( IMG_Init( imgFlags ) & imgFlags ) )
+            cout <<  "SDL_image could not initialize! SDL_image Error: " << endl << IMG_GetError();
+        //Initialize SDL_ttf
+        if( TTF_Init() == -1 )
+            cout << "SDL_ttf could not initialize! SDL_ttf Error: \n" <<  TTF_GetError() ;
+    }
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
     SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -551,6 +676,8 @@ void initSDL(SDL_Window* &window, SDL_Renderer* &renderer)
 
 void quitSDL(SDL_Window* window, SDL_Renderer* renderer)
 {
+    TTF_CloseFont (gFont);
+    gFont = nullptr;
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
@@ -566,3 +693,4 @@ void waitUntilKeyPressed()
         SDL_Delay(100);
     }
 }
+
