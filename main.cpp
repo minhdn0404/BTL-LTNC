@@ -21,6 +21,13 @@ const int FRAME_DOWN = 50;
 const int FRAME_LEFT = 50;
 const int FRAME_RIGHT = 50;
 const int MAX_SCORE = 60;   // for snake vs snake mode
+const int NUMBER_OF_FOOD = 5;
+const string FOOD_APPLE_PATH = "Background/food_apple.png";
+const string FOOD_BANANA_PATH = "Background/food_banana.png";
+const string FOOD_GRAPE_PATH = "Background/food_grape.png";
+const string FOOD_LEMON_PATH = "Background/food_lemon.png";
+const string FOOD_ORANGE_PATH = "Background/food_orange.png";
+
 
 void initSDL(SDL_Window* &window, SDL_Renderer* &renderer);
 void logSDLError(std::ostream& os,
@@ -44,17 +51,33 @@ struct Dot
     int step = STEP;
     int directionX = step;
     int directionY = 0;
-    Dot () {};
+    SDL_Texture* snake_head;
+    Dot ()
+    {
+        snake_head = nullptr;
+    }
+    ~Dot()
+    {
+        SDL_DestroyTexture(snake_head);
+        snake_head = nullptr;
+    }
     Dot(int _x, int _y)
     {
         x = _x;
         y = _y;
+        snake_head = nullptr;
     }
-    void draw (int r, int g, int b)
+    void draw (Uint8 r, Uint8 g,Uint8 b)
     {
        SDL_SetRenderDrawColor(renderer,r,g,b,255);  // green
        SDL_Rect dot = {x,y,size,size};
        SDL_RenderFillRect(renderer,&dot);
+    }
+    void draw_head (string path)
+    {
+        snake_head = loadTexture(path);
+        SDL_Rect dot = {x,y,DOT_SIZE,DOT_SIZE};
+        SDL_RenderCopy(renderer,snake_head,nullptr,&dot);
     }
     void move(string mode)  // chỉ với body[0]
     {
@@ -107,11 +130,21 @@ struct Snake
     bool up;
     bool down;
 
-    void draw (int r,int g, int b)
+    Snake ()
+    {
+      up = 0;
+      down = 0;
+      right = 0;
+      left = 0;
+    }
+    void draw (Uint8 r,Uint8 g, Uint8 b, string path)
     {
         for (int i=0; i<body.size(); ++i)
         {
-            body[i].draw(r,g,b);
+            if (i!=0) body[i].draw(r,g,b);
+            else {
+                body[i].draw_head(path);
+            }
         }
     }
 
@@ -247,16 +280,32 @@ struct Food
 {
     int x;
     int y;
+    SDL_Texture* food_texture;
+    string food_type [NUMBER_OF_FOOD];
+
+    Food ()
+    {
+        food_type[0] = FOOD_APPLE_PATH;
+        food_type[1] = FOOD_BANANA_PATH;
+        food_type[2] = FOOD_GRAPE_PATH;
+        food_type[3] = FOOD_LEMON_PATH;
+        food_type[4] = FOOD_ORANGE_PATH;
+    }
+    ~Food ()
+    {
+        SDL_DestroyTexture(food_texture);
+        food_texture = nullptr;
+    }
     void random_generate ()
     {
         x = DOT_SIZE*(random(FRAME_LEFT/DOT_SIZE, (SCREEN_WIDTH-FRAME_RIGHT-DOT_SIZE)/DOT_SIZE));
         y = DOT_SIZE*(random(FRAME_UP/DOT_SIZE, (SCREEN_HEIGHT-FRAME_DOWN-DOT_SIZE)/DOT_SIZE));
     }
-    void draw_food ()
+    void draw_food (int i)
     {
-       SDL_SetRenderDrawColor(renderer,255,69,0,255);  // orange
-       SDL_Rect dot = {x,y,DOT_SIZE,DOT_SIZE};
-       SDL_RenderFillRect(renderer,&dot);
+        food_texture = loadTexture(food_type[i]);
+        SDL_Rect dot = {x,y,DOT_SIZE+10,DOT_SIZE+10};
+        SDL_RenderCopy(renderer,food_texture,nullptr,&dot);
     }
     bool is_eaten_by (Snake snake)
     {
@@ -353,10 +402,6 @@ void init_game (Snake &snake,int x1,int y1,int x2,int y2,int x3,int y3,int x4,in
     snake.body.push_back(d1);
     snake.body.push_back(d2);
     snake.body.push_back(d3);
-    snake.up = 0;
-    snake.down = 0;
-    snake.right = 0;
-    snake.left = 0;
 }
 
 void classic ()
@@ -367,6 +412,7 @@ void classic ()
     snake.score = 0;
     Food food;
     food.random_generate();
+    int index_food_path = 0; // đồ ăn ngẫu nhiên
 
     while (new_game.is_Over(snake,"classic") == false)
     {
@@ -375,6 +421,7 @@ void classic ()
             ++snake.score;
             cout << "Score: " << snake.score << endl;
             snake.update();  // tăng kích thước rắn
+            index_food_path = random(0,4);
             food.random_generate();   // random thức ăn
          }
          SDL_SetRenderDrawColor(renderer,255,255,255,255);
@@ -383,8 +430,8 @@ void classic ()
          new_game.draw_frame(48, 92, 240);
          new_game.draw_banner(29, 243, 10, "Classic");
          new_game.draw_score(snake.score,255,0,0,SCREEN_WIDTH/2,20,200,50);
-         snake.draw(0,255,0);
-         food.draw_food();
+         snake.draw(0,255,0,"Background/green_head.png");
+         food.draw_food(index_food_path);
          SDL_RenderPresent(renderer);
          SDL_Delay(DELAY_TIME);
 
@@ -414,7 +461,7 @@ void modern ()
     snake.score = 0;
     Food food;
     food.random_generate();
-
+    int index_food_path = 0;
 
     while (new_game.is_Over(snake,"modern") == false)
     {
@@ -423,6 +470,7 @@ void modern ()
             ++snake.score;
             cout << "Score: " << snake.score << endl;
             snake.update();  // tăng kích thước rắn
+            index_food_path = random(0,4);
             food.random_generate();   // random thức ăn
          }
          SDL_SetRenderDrawColor(renderer,255,255,255,255);
@@ -431,8 +479,8 @@ void modern ()
          new_game.draw_frame(48, 92, 240);
          new_game.draw_banner(29, 243, 10, "Modern");
          new_game.draw_score(snake.score,255,0,0,SCREEN_WIDTH/2,20,200,50);
-         snake.draw(0,255,0);
-         food.draw_food();
+         snake.draw(0,255,0,"Background/green_head.png");
+         food.draw_food(index_food_path);
          SDL_RenderPresent(renderer);
          SDL_Delay(DELAY_TIME);
 
@@ -464,6 +512,7 @@ void snake_vs_snake ()
     snake2.score = 0;
     Food food;
     food.random_generate();
+    int index_food_path = 0;
 
     while (new_game.is_Over_svs(snake1, snake2) == false)
     {
@@ -473,6 +522,7 @@ void snake_vs_snake ()
             ++snake1.score;
             cout << "Score1: " << snake1.score << endl;
             snake1.update();  // tăng kích thước rắn
+            index_food_path = random(0,4);
             food.random_generate();   // random thức ăn
          }
          if (food.is_eaten_by(snake2)==true ) {
@@ -488,9 +538,9 @@ void snake_vs_snake ()
          new_game.draw_banner(29, 243, 10, "Snake vs Snake");
          new_game.draw_score(snake1.score,255, 162, 0,SCREEN_WIDTH/2,10,200,30);
          new_game.draw_score(snake2.score,45, 212, 199,SCREEN_WIDTH/2,40,200,30);
-         snake1.draw(255, 162, 0);
-         snake2.draw(45, 212, 199);
-         food.draw_food();
+         snake1.draw(255, 162, 0, "Background/orange_head.png");
+         snake2.draw(45, 212, 199, "Background/cyan_head.png");
+         food.draw_food(index_food_path);
          SDL_RenderPresent(renderer);
          SDL_Delay(DELAY_TIME);
 
@@ -693,4 +743,5 @@ void waitUntilKeyPressed()
         SDL_Delay(100);
     }
 }
+
 
