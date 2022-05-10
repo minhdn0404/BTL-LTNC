@@ -28,6 +28,12 @@ const string FOOD_GRAPE_PATH = "Background/food_grape.png";
 const string FOOD_LEMON_PATH = "Background/food_lemon.png";
 const string FOOD_ORANGE_PATH = "Background/food_orange.png";
 
+const int RANDOM_FOOD_POSSIBILITY [20] = {0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,4};
+/* 40% apple  +1
+   20% banana +2
+   20% grape  +2
+   15% lemon  +3
+   5% orange  +5  */
 
 void initSDL(SDL_Window* &window, SDL_Renderer* &renderer);
 void logSDLError(std::ostream& os,
@@ -76,7 +82,7 @@ struct Dot
     void draw_head (string path)
     {
         snake_head = loadTexture(path);
-        SDL_Rect dot = {x,y,DOT_SIZE,DOT_SIZE};
+        SDL_Rect dot = {x,y-5,DOT_SIZE+5,DOT_SIZE+10};
         SDL_RenderCopy(renderer,snake_head,nullptr,&dot);
     }
     void move(string mode)  // chỉ với body[0]
@@ -268,6 +274,13 @@ struct Snake
         }
         return false;
     }
+    void update_score (int type_of_food)
+    {
+        if (type_of_food == 0) score+=1;
+        else if (type_of_food == 1 || type_of_food == 2) score+=2;
+        else if (type_of_food == 3) score+=3;
+        else if (type_of_food == 4) score+=5;
+    }
 
 };
 
@@ -301,10 +314,10 @@ struct Food
         x = DOT_SIZE*(random(FRAME_LEFT/DOT_SIZE, (SCREEN_WIDTH-FRAME_RIGHT-DOT_SIZE)/DOT_SIZE));
         y = DOT_SIZE*(random(FRAME_UP/DOT_SIZE, (SCREEN_HEIGHT-FRAME_DOWN-DOT_SIZE)/DOT_SIZE));
     }
-    void draw_food (int i)
+    void draw_food (int i) // 0 <= i <= 19
     {
-        food_texture = loadTexture(food_type[i]);
-        SDL_Rect dot = {x,y,DOT_SIZE+10,DOT_SIZE+10};
+        food_texture = loadTexture(food_type[RANDOM_FOOD_POSSIBILITY[i]]);
+        SDL_Rect dot = {x,y,DOT_SIZE+4,DOT_SIZE+4};
         SDL_RenderCopy(renderer,food_texture,nullptr,&dot);
     }
     bool is_eaten_by (Snake snake)
@@ -343,6 +356,20 @@ struct Game
     void draw_score(const int score, Uint8 r, Uint8 g, Uint8 b, int x, int y, int w, int h )
     {
         string s = "Score: " + to_string(score);
+        gFont = TTF_OpenFont( "Font/zxzxzx.ttf", 28 );
+        SDL_Color textColor = {r, g, b};
+        texture_font = loadFromRenderedText(s, textColor);
+        SDL_Rect rect = {x,y,w,h};
+        SDL_RenderCopy(renderer,texture_font,nullptr,&rect);
+    }
+
+    void draw_updated_score ( int food_type, Uint8 r, Uint8 g, Uint8 b, int x, int y, int w, int h )
+    {
+        string s;
+        if (food_type == 0) s = "+ 1";
+        else if (food_type == 1 || food_type == 2) s = "+ 2";
+        else if (food_type == 3) s = "+ 3";
+        else if (food_type == 4) s = "+ 5";
         gFont = TTF_OpenFont( "Font/zxzxzx.ttf", 28 );
         SDL_Color textColor = {r, g, b};
         texture_font = loadFromRenderedText(s, textColor);
@@ -412,16 +439,19 @@ void classic ()
     snake.score = 0;
     Food food;
     food.random_generate();
-    int index_food_path = 0; // đồ ăn ngẫu nhiên
+    int index_food_path = 0; // loại đồ ăn ngẫu nhiên
 
     while (new_game.is_Over(snake,"classic") == false)
     {
          snake.move("classic");
+         bool eaten_check = 0;
          if (food.is_eaten_by(snake)==true) {
-            ++snake.score;
+            snake.update_score(RANDOM_FOOD_POSSIBILITY[index_food_path]);  // tăng điểm dựa vào thức ăn
+            eaten_check = 1;
+            // new_game.draw_updated_score(RANDOM_FOOD_POSSIBILITY[index_food_path],255,0,0,SCREEN_WIDTH - 40, SCREEN_HEIGHT+20, 50, 50);
             cout << "Score: " << snake.score << endl;
             snake.update();  // tăng kích thước rắn
-            index_food_path = random(0,4);
+            index_food_path = random(0,19);
             food.random_generate();   // random thức ăn
          }
          SDL_SetRenderDrawColor(renderer,255,255,255,255);
@@ -430,6 +460,7 @@ void classic ()
          new_game.draw_frame(48, 92, 240);
          new_game.draw_banner(29, 243, 10, "Classic");
          new_game.draw_score(snake.score,255,0,0,SCREEN_WIDTH/2,20,200,50);
+         new_game.draw_updated_score(0,255,0,0,SCREEN_WIDTH - 60, 20, 50, 50);
          snake.draw(0,255,0,"Background/green_head.png");
          food.draw_food(index_food_path);
          SDL_RenderPresent(renderer);
@@ -467,10 +498,10 @@ void modern ()
     {
          snake.move("modern");
          if (food.is_eaten_by(snake)==true) {
-            ++snake.score;
+            snake.update_score(RANDOM_FOOD_POSSIBILITY[index_food_path]);  // tăng điểm dựa vào thức ăn
             cout << "Score: " << snake.score << endl;
             snake.update();  // tăng kích thước rắn
-            index_food_path = random(0,4);
+            index_food_path = random(0,19);
             food.random_generate();   // random thức ăn
          }
          SDL_SetRenderDrawColor(renderer,255,255,255,255);
@@ -519,14 +550,14 @@ void snake_vs_snake ()
          snake1.move("classic");
          snake2.move("classic");
          if (food.is_eaten_by(snake1)==true ) {
-            ++snake1.score;
+            snake1.update_score(RANDOM_FOOD_POSSIBILITY[index_food_path]);  // tăng điểm dựa vào thức ăn
             cout << "Score1: " << snake1.score << endl;
             snake1.update();  // tăng kích thước rắn
-            index_food_path = random(0,4);
+            index_food_path = random(0,19);
             food.random_generate();   // random thức ăn
          }
          if (food.is_eaten_by(snake2)==true ) {
-            ++snake2.score;
+            snake2.update_score(RANDOM_FOOD_POSSIBILITY[index_food_path]);  // tăng điểm dựa vào thức ăn
             cout << "Score2: " << snake2.score << endl;
             snake2.update();  // tăng kích thước rắn
             food.random_generate();   // random thức ăn
@@ -743,5 +774,6 @@ void waitUntilKeyPressed()
         SDL_Delay(100);
     }
 }
+
 
 
