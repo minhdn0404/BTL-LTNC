@@ -19,14 +19,17 @@ const int DELAY_TIME = 50;
 const int FRAME_UP = 70;
 const int FRAME_DOWN = 50;
 const int FRAME_LEFT = 50;
-const int FRAME_RIGHT = 50;
+const int FRAME_RIGHT = 50;   // Màn hình thực: 540x360 từ (50,70) đến (590,430)
 const int MAX_SCORE = 60;   // for snake vs snake mode
 const int NUMBER_OF_FOOD = 5;
+const int NUMBER_OF_BOMB = 2;
 const string FOOD_APPLE_PATH = "Background/food_apple.png";
 const string FOOD_BANANA_PATH = "Background/food_banana.png";
 const string FOOD_GRAPE_PATH = "Background/food_grape.png";
 const string FOOD_LEMON_PATH = "Background/food_lemon.png";
 const string FOOD_ORANGE_PATH = "Background/food_orange.png";
+const string BLACK_BOMB_PATH = "Background/black_bomb.png";
+const string RED_BOMB_PATH = "Background/red_bomb.png";
 
 const int RANDOM_FOOD_POSSIBILITY [20] = {0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,4};
 /* 40% apple  +1
@@ -448,7 +451,6 @@ void classic ()
          if (food.is_eaten_by(snake)==true) {
             snake.update_score(RANDOM_FOOD_POSSIBILITY[index_food_path]);  // tăng điểm dựa vào thức ăn
             eaten_check = 1;
-            // new_game.draw_updated_score(RANDOM_FOOD_POSSIBILITY[index_food_path],255,0,0,SCREEN_WIDTH - 40, SCREEN_HEIGHT+20, 50, 50);
             cout << "Score: " << snake.score << endl;
             snake.update();  // tăng kích thước rắn
             index_food_path = random(0,19);
@@ -460,7 +462,7 @@ void classic ()
          new_game.draw_frame(48, 92, 240);
          new_game.draw_banner(29, 243, 10, "Classic");
          new_game.draw_score(snake.score,255,0,0,SCREEN_WIDTH/2,20,200,50);
-         new_game.draw_updated_score(0,255,0,0,SCREEN_WIDTH - 60, 20, 50, 50);
+         new_game.draw_updated_score(RANDOM_FOOD_POSSIBILITY[index_food_path],255,0,0,SCREEN_WIDTH - 60, 20, 50, 50);
          snake.draw(0,255,0,"Background/green_head.png");
          food.draw_food(index_food_path);
          SDL_RenderPresent(renderer);
@@ -510,6 +512,7 @@ void modern ()
          new_game.draw_frame(48, 92, 240);
          new_game.draw_banner(29, 243, 10, "Modern");
          new_game.draw_score(snake.score,255,0,0,SCREEN_WIDTH/2,20,200,50);
+         new_game.draw_updated_score(RANDOM_FOOD_POSSIBILITY[index_food_path],255,0,0,SCREEN_WIDTH - 60, 20, 50, 50);
          snake.draw(0,255,0,"Background/green_head.png");
          food.draw_food(index_food_path);
          SDL_RenderPresent(renderer);
@@ -569,6 +572,7 @@ void snake_vs_snake ()
          new_game.draw_banner(29, 243, 10, "Snake vs Snake");
          new_game.draw_score(snake1.score,255, 162, 0,SCREEN_WIDTH/2,10,200,30);
          new_game.draw_score(snake2.score,45, 212, 199,SCREEN_WIDTH/2,40,200,30);
+         new_game.draw_updated_score(RANDOM_FOOD_POSSIBILITY[index_food_path],255,0,0,SCREEN_WIDTH - 60, 20, 50, 50);
          snake1.draw(255, 162, 0, "Background/orange_head.png");
          snake2.draw(45, 212, 199, "Background/cyan_head.png");
          food.draw_food(index_food_path);
@@ -774,6 +778,7 @@ void waitUntilKeyPressed()
         SDL_Delay(100);
     }
 }
+
 
 
 
