@@ -13,6 +13,7 @@
 #include "Dot.h"
 #include "Snake.h"
 #include "Food.h"
+#include "Bomb.h"
 #include "Game.h"
 #include "init.h"
 #include "classic.h"
