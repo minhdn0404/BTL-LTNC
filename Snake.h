@@ -152,13 +152,17 @@ struct Snake
         }
         return false;
     }
-    void update_score (int type_of_food)
+    void increase_score (int type_of_food)
     {
         if (type_of_food == 0) score+=1;
         else if (type_of_food == 1 || type_of_food == 2) score+=2;
         else if (type_of_food == 3) score+=3;
         else if (type_of_food == 4) score+=5;
     }
-
+    void decrease_score (int type_of_bomb)
+    {
+        if (type_of_bomb == 0) score -= 3;
+        else score -= 5;
+    }
 };
 
