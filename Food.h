@@ -22,6 +22,8 @@ struct Food
         food_type[2] = FOOD_GRAPE_PATH;
         food_type[3] = FOOD_LEMON_PATH;
         food_type[4] = FOOD_ORANGE_PATH;
+        x = 0;
+        y = 0;
     }
     ~Food ()
     {
@@ -46,3 +48,4 @@ struct Food
     }
 
 };
+
