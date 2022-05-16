@@ -29,7 +29,7 @@ const string FOOD_BANANA_PATH = "Background/food_banana.png";
 const string FOOD_GRAPE_PATH = "Background/food_grape.png";
 const string FOOD_LEMON_PATH = "Background/food_lemon.png";
 const string FOOD_ORANGE_PATH = "Background/food_orange.png";
-const string BLACK_BOMB_PATH = "Background/black_bomb.png";
+const string BLUE_BOMB_PATH = "Background/blue_bomb.png";
 const string RED_BOMB_PATH = "Background/red_bomb.png";
 
 const int RANDOM_FOOD_POSSIBILITY [20] = {0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,4};
@@ -38,5 +38,10 @@ const int RANDOM_FOOD_POSSIBILITY [20] = {0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,
    20% grape  +2
    15% lemon  +3
    5% orange  +5  */
+
+const int RANDOM_BOMB_POSSIBILITY [10] = {0,0,0,0,0,0,0,1,1,1};
+/* 70% black bomb -3
+   30% red bomb   -5
+*/
 
 #endif // TOOLS_H
