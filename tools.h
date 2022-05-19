@@ -13,10 +13,12 @@ using namespace std;
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
+const int SCREEN_FPS = 100;
+const int SCREEN_TICK_PER_FRAME = 1000 / SCREEN_FPS;
 const string WINDOW_TITLE = "Snake game";
 const int STEP = 10;
 const int DOT_SIZE = 10;
-const int DELAY_TIME = 50;
+const int DELAY_TIME = 30;
 const int FRAME_UP = 70;
 const int FRAME_DOWN = 50;
 const int FRAME_LEFT = 50;
