@@ -11,6 +11,7 @@ struct Game
     int high_score;
     SDL_Texture* play_background;
     SDL_Texture* texture_font;
+    SDL_Texture* explode_texture;
 
     Game()
     {
@@ -41,13 +42,29 @@ struct Game
         SDL_RenderCopy(renderer,texture_font,nullptr,&rect);
     }
 
-    void draw_updated_score ( int food_type, Uint8 r, Uint8 g, Uint8 b, int x, int y, int w, int h, SDL_Renderer* renderer, TTF_Font *gFont )
+    void draw_bombs_number (int number_of_bombs, Uint16 r, Uint16 g, Uint16 b, int x, int y, int w, int h, SDL_Renderer* renderer, TTF_Font *gFont)
+    {
+        string s = "Bombs: " + to_string(number_of_bombs);
+        gFont = TTF_OpenFont("Font/zxzxzx.ttf", 28);
+        SDL_Color textColor = {r,g,b};
+        texture_font = loadFromRenderedText(s, textColor, renderer,gFont);
+        SDL_Rect rect = {x,y,w,h};
+        SDL_RenderCopy(renderer, texture_font, nullptr,&rect);
+    }
+
+    void draw_updated_score ( int food_or_bomb, int type, Uint8 r, Uint8 g, Uint8 b, int x, int y, int w, int h, SDL_Renderer* renderer, TTF_Font *gFont )
     {
         string s;
-        if (food_type == 0) s = "+ 1";
-        else if (food_type == 1 || food_type == 2) s = "+ 2";
-        else if (food_type == 3) s = "+ 3";
-        else if (food_type == 4) s = "+ 5";
+        if (food_or_bomb == 1) {
+           if (type == 0) s = "+ 1";
+           else if (type == 1 || type == 2) s = "+ 2";
+           else if (type == 3) s = "+ 3";
+           else if (type == 4) s = "+ 5";
+        }
+        else {
+           if (type == 0) s = "-3";
+           else s = "-5";
+        }
         gFont = TTF_OpenFont( "Font/zxzxzx.ttf", 28 );
         SDL_Color textColor = {r, g, b};
         texture_font = loadFromRenderedText(s, textColor, renderer, gFont);
@@ -75,6 +92,13 @@ struct Game
       SDL_RenderFillRect(renderer,&frame_down);
       SDL_RenderFillRect(renderer,&frame_left);
       SDL_RenderFillRect(renderer,&frame_right);
+    }
+
+    void explode (SDL_Renderer* renderer, int x, int y)
+    {
+        explode_texture = loadTexture("Background/explode.png", renderer);
+        SDL_Rect dot = {x,y,DOT_SIZE+10, DOT_SIZE+10};
+        SDL_RenderCopy(renderer,explode_texture,nullptr,&dot);
     }
 
     bool is_Over (Snake &snake, string mode)
