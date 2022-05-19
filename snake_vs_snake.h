@@ -5,10 +5,10 @@ void snake_vs_snake ()
     Game new_game;
     Snake snake1;
     Snake snake2;
+//    snake1.load_head_image("Background/orange_head.png",renderer);
+//    snake2.load_head_image("Background/cyan_head.png",renderer);
     init_game(snake1,FRAME_LEFT+40,FRAME_UP+10,FRAME_LEFT+30,FRAME_UP+10,FRAME_LEFT+20,FRAME_UP+10,FRAME_LEFT+10,FRAME_UP+10);
     init_game(snake2,FRAME_LEFT+40,FRAME_UP+60,FRAME_LEFT+30,FRAME_UP+60,FRAME_LEFT+20,FRAME_UP+60,FRAME_LEFT+10,FRAME_UP+60);
-    snake1.score = 0;
-    snake2.score = 0;
     Food food;
     food.random_generate();
     int index_food_path = 0;
@@ -18,17 +18,19 @@ void snake_vs_snake ()
          snake1.move("classic");
          snake2.move("classic");
          if (food.is_eaten_by(snake1)==true ) {
-            snake1.update_score(RANDOM_FOOD_POSSIBILITY[index_food_path]);  // tăng điểm dựa vào thức ăn
+            snake1.increase_score(RANDOM_FOOD_POSSIBILITY[index_food_path]);  // tăng điểm dựa vào thức ăn
             cout << "Score1: " << snake1.score << endl;
             snake1.update();  // tăng kích thước rắn
             index_food_path = random(0,19);
             food.random_generate();   // random thức ăn
+            food.random_food_type();
          }
          if (food.is_eaten_by(snake2)==true ) {
-            snake2.update_score(RANDOM_FOOD_POSSIBILITY[index_food_path]);  // tăng điểm dựa vào thức ăn
+            snake2.increase_score(RANDOM_FOOD_POSSIBILITY[index_food_path]);  // tăng điểm dựa vào thức ăn
             cout << "Score2: " << snake2.score << endl;
             snake2.update();  // tăng kích thước rắn
             food.random_generate();   // random thức ăn
+            food.random_food_type();
          }
          SDL_SetRenderDrawColor(renderer,255,255,255,255);
          SDL_RenderClear(renderer);
@@ -37,10 +39,10 @@ void snake_vs_snake ()
          new_game.draw_banner(29, 243, 10, "Snake vs Snake",renderer,gFont);
          new_game.draw_score(snake1.score,255, 162, 0,SCREEN_WIDTH/2,10,200,30,renderer,gFont);
          new_game.draw_score(snake2.score,45, 212, 199,SCREEN_WIDTH/2,40,200,30,renderer,gFont);
-         new_game.draw_updated_score(RANDOM_FOOD_POSSIBILITY[index_food_path],255,0,0,SCREEN_WIDTH - 60, 20, 50, 50,renderer, gFont);
-         snake1.draw(255, 162, 0, "Background/orange_head.png",renderer);
-         snake2.draw(45, 212, 199, "Background/cyan_head.png",renderer);
-         food.draw_food(index_food_path, renderer);
+         new_game.draw_updated_score(1,RANDOM_FOOD_POSSIBILITY[index_food_path],255,0,0,SCREEN_WIDTH - 60, 20, 50, 50,renderer, gFont);
+         snake1.draw(255, 162, 0,"Background/orange_head.png",renderer);
+         snake2.draw(45, 212, 199,"Background/cyan_head.png",renderer);
+         food.draw_food(renderer);
          SDL_RenderPresent(renderer);
          SDL_Delay(DELAY_TIME);
 
