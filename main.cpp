@@ -19,6 +19,7 @@
 #include "classic.h"
 #include "modern.h"
 #include "snake_vs_snake.h"
+#include "timer.h"
 
 using namespace std;
 
@@ -90,6 +91,8 @@ int main (int argc, char* argv[])
     quitSDL(window, renderer, gFont);
     return 0;
 }
+
+
 
 
 
