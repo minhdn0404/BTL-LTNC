@@ -3,6 +3,7 @@
 #include <cmath>
 #include "random.h"
 #include "Bomb.h"
+#include "obstacle.h"
 
 struct Food
 {
@@ -29,11 +30,23 @@ struct Food
         food_texture = nullptr;
     }
 
-    bool checkEmpty_forFood (int x, int y, Snake snake)
+    bool checkEmpty_forFood (int x_, int y_, Snake snake) // classic
     {
         for (int i=0; i<snake.body.size(); ++i)
         {
-            if (x == snake.body[i].x && y == snake.body[i].y) return false;
+            if (x_ == snake.body[i].x && y_ == snake.body[i].y) return false;
+        }
+        return true;
+    }
+    bool checkEmpty_forFood (int x_, int y_, Snake snake, vector<Obstacle> obstacles) // modern
+    {
+        for (int i=0; i<snake.body.size(); ++i)
+        {
+            if (x_ == snake.body[i].x && y_ == snake.body[i].y) return false;
+        }
+        for (int i=0; i<obstacles.size(); ++i)
+        {
+            if (x_ == obstacles[i].x && y_ == obstacles[i].y) return false;
         }
         return true;
     }
@@ -51,7 +64,15 @@ struct Food
         if (checkEmpty_forFood(x,y,snake)==false) {
              random_generate_classic(snake);
         }
-        cout << "Finish" << endl;
+    }
+
+    void random_generate_modern(Snake snake, vector<Obstacle> obstacles)
+    {
+        x = DOT_SIZE*(random(6,58));
+        y = DOT_SIZE*(random(8,42));
+        if (checkEmpty_forFood(x,y,snake,obstacles)==false) {
+            random_generate_modern(snake,obstacles);
+        }
     }
 
     void random_food_type ()
@@ -72,4 +93,3 @@ struct Food
     }
 
 };
-
