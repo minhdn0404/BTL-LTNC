@@ -22,7 +22,7 @@ void classic ()
 
     bool eat_food_check = 0;
     bool eat_bomb_check = 0;
-    while (new_game.is_Over(snake,"classic") == false)
+    while (new_game.is_Over(snake) == false)
     {
 
          if (snake.score <= 200) current_number_of_bombs = (snake.score)/10;
