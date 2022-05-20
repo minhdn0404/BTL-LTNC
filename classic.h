@@ -16,7 +16,7 @@ void classic ()
     Bomb bombs [20];
     for (int i=0; i<20; ++i)
     {
-        bombs[i].random_generate();
+        bombs[i].random_generate_classic(snake);
         bombs[i].load_image(renderer);  // load cả 2 ảnh
     }
 
@@ -41,7 +41,7 @@ void classic ()
             food.random_food_type();  // random loại thức ăn
             for (int i=0; i<current_number_of_bombs; ++i) // random bomb
             {
-                bombs[i].random_generate();
+                bombs[i].random_generate_classic(snake);
                 bombs[i].random_bomb_type();
             }
          }
@@ -60,7 +60,7 @@ void classic ()
                 y_exp = bombs[i].y;
                 for (int i=0; i<current_number_of_bombs; ++i)
                 {
-                  bombs[i].random_generate();
+                  bombs[i].random_generate_classic(snake);
                   bombs[i].random_bomb_type();
                 }
                 break;
