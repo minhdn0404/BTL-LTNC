@@ -51,6 +51,14 @@ struct Bomb
              random_generate_classic(snake);
         }
     }
+    void random_generate_svs (Snake snake1, Snake snake2)
+    {
+        x = DOT_SIZE*(random(FRAME_LEFT/DOT_SIZE, (SCREEN_WIDTH-FRAME_RIGHT-DOT_SIZE)/DOT_SIZE));
+        y = DOT_SIZE*(random(FRAME_UP/DOT_SIZE, (SCREEN_HEIGHT-FRAME_DOWN-DOT_SIZE)/DOT_SIZE));
+        if (checkEmpty_forBomb(x,y,snake1)==false || checkEmpty_forBomb(x,y,snake2)==false) {
+             random_generate_svs(snake1,snake2);
+        }
+    }
 
     void random_bomb_type ()
     {
@@ -76,4 +84,3 @@ struct Bomb
        else return false;
     }
 };
-
