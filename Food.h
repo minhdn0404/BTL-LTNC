@@ -74,6 +74,14 @@ struct Food
             random_generate_modern(snake,obstacles);
         }
     }
+    void random_generate_svs (Snake snake1, Snake snake2)
+    {
+        x = DOT_SIZE*(random(FRAME_LEFT/DOT_SIZE, (SCREEN_WIDTH-FRAME_RIGHT-DOT_SIZE)/DOT_SIZE));
+        y = DOT_SIZE*(random(FRAME_UP/DOT_SIZE, (SCREEN_HEIGHT-FRAME_DOWN-DOT_SIZE)/DOT_SIZE));
+        if (checkEmpty_forFood(x,y,snake1)==false || checkEmpty_forFood(x,y,snake2)==false) {
+            random_generate_svs(snake1, snake2);
+        }
+    }
 
     void random_food_type ()
     {
