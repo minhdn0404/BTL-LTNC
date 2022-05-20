@@ -109,5 +109,3 @@ void classic ()
     }
     cout << "Game Over";
 }
-
-
