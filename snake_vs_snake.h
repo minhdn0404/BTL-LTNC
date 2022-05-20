@@ -13,7 +13,7 @@ void snake_vs_snake ()
     food.random_generate();
     int index_food_path = 0;
 
-    while (new_game.is_Over_svs(snake1, snake2) == false)
+    while (new_game.is_Over(snake1, snake2) == false)
     {
          snake1.move("classic");
          snake2.move("classic");
@@ -76,4 +76,3 @@ void snake_vs_snake ()
      }
     cout << "Game Over";
 }
-
