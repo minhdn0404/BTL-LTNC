@@ -20,6 +20,7 @@
 #include "modern.h"
 #include "snake_vs_snake.h"
 #include "timer.h"
+#include "obstacle.h"
 
 using namespace std;
 
