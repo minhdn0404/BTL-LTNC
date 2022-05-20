@@ -48,7 +48,6 @@ struct Food
     {
         x = DOT_SIZE*(random(FRAME_LEFT/DOT_SIZE, (SCREEN_WIDTH-FRAME_RIGHT-DOT_SIZE)/DOT_SIZE));
         y = DOT_SIZE*(random(FRAME_UP/DOT_SIZE, (SCREEN_HEIGHT-FRAME_DOWN-DOT_SIZE)/DOT_SIZE));
-        cout << x << " " << y;
         if (checkEmpty_forFood(x,y,snake)==false) {
              random_generate_classic(snake);
         }
