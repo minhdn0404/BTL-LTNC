@@ -1,6 +1,7 @@
 
 #pragma once
 #include "random.h"
+#include "Food.h"
 
 struct Bomb
 {
@@ -33,6 +34,24 @@ struct Bomb
         y = DOT_SIZE*(random(FRAME_UP/DOT_SIZE, (SCREEN_HEIGHT-FRAME_DOWN-DOT_SIZE)/DOT_SIZE));
     }
 
+    bool checkEmpty_forBomb (int x, int y, Snake snake)
+    {
+        for (int i=0; i<snake.body.size(); ++i)
+        {
+            if (x == snake.body[i].x && y == snake.body[i].y) return false;
+        }
+        return true;
+    }
+
+    void random_generate_classic (Snake snake)
+    {
+        x = DOT_SIZE*(random(FRAME_LEFT/DOT_SIZE, (SCREEN_WIDTH-FRAME_RIGHT-DOT_SIZE)/DOT_SIZE));
+        y = DOT_SIZE*(random(FRAME_UP/DOT_SIZE, (SCREEN_HEIGHT-FRAME_DOWN-DOT_SIZE)/DOT_SIZE));
+        if (checkEmpty_forBomb(x,y,snake)==false) {
+             random_generate_classic(snake);
+        }
+    }
+
     void random_bomb_type ()
     {
         int i = random(0,9);
@@ -57,3 +76,4 @@ struct Bomb
        else return false;
     }
 };
+
