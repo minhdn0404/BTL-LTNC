@@ -101,19 +101,33 @@ struct Game
         SDL_RenderCopy(renderer,explode_texture,nullptr,&dot);
     }
 
-    bool is_Over (Snake &snake, string mode)
+    bool checkCollide_modern (Snake &snake, vector<Obstacle> obstacles)
     {
-       if (mode == "classic") {
+        bool obs_collide = false;
+        for (int i=0; i<obstacles.size(); ++i)
+        {
+            if (obstacles[i].is_collided_by(snake) == true) {
+                obs_collide = true;
+                break;
+            }
+        }
+        if (snake.body[0].inside(FRAME_LEFT,FRAME_UP,SCREEN_WIDTH-FRAME_RIGHT,SCREEN_HEIGHT-FRAME_DOWN)==false
+            || obs_collide == true ) return true;
+        else return false;
+    }
+
+    bool is_Over (Snake &snake) // classic
+    {
            if ( (snake.eat_itself() == true) ) return true;
            else return false;
-       }
-       else if (mode == "modern") {
-           if ( (snake.body[0].inside(FRAME_LEFT,FRAME_UP,SCREEN_WIDTH-FRAME_RIGHT,SCREEN_HEIGHT-FRAME_DOWN)==false)
+    }
+    bool is_Over (Snake &snake, vector<Obstacle> obstacles)  // modern
+    {
+         if ( checkCollide_modern(snake,obstacles) == true
              || (snake.eat_itself() == true) ) return true;
            else return false;
-       }
     }
-    bool is_Over_svs (Snake &snake1, Snake &snake2)
+    bool is_Over (Snake &snake1, Snake &snake2)
     {
        if (snake1.eat_other(snake2)==true || snake2.eat_other(snake1)==true
            || snake1.score == MAX_SCORE || snake2.score == MAX_SCORE) return true;
