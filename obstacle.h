@@ -1,3 +1,4 @@
+
 #pragma once
 #include "random.h"
 
@@ -44,10 +45,10 @@ struct Obstacle
         return true;
     }
 
-    void random_generate_modern (int row_state,Snake snake)
+    void random_generate (int row_state,Snake snake)
     {
         random_generate(row_state);
-        if (checkEmpty(x,y,snake) == false) random_generate_modern(row_state,snake);
+        if (checkEmpty(x,y,snake) == false) random_generate(row_state,snake);
     }
     void draw (Uint8 r, Uint8 g,Uint8 b, SDL_Renderer* renderer)
     {
@@ -63,3 +64,4 @@ struct Obstacle
     }
 
 };
+
