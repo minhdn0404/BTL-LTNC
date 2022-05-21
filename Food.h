@@ -30,7 +30,7 @@ struct Food
         food_texture = nullptr;
     }
 
-    bool checkEmpty_forFood (int x_, int y_, Snake snake) // classic
+    bool checkEmpty (int x_, int y_, Snake snake) // classic
     {
         for (int i=0; i<snake.body.size(); ++i)
         {
@@ -38,7 +38,7 @@ struct Food
         }
         return true;
     }
-    bool checkEmpty_forFood (int x_, int y_, Snake snake, vector<Obstacle> obstacles) // modern
+    bool checkEmpty (int x_, int y_, Snake snake, vector<Obstacle> obstacles) // modern
     {
         for (int i=0; i<snake.body.size(); ++i)
         {
@@ -51,39 +51,33 @@ struct Food
         return true;
     }
 
-    void random_generate ()
+    void random_generate (Snake snake)
     {
         x = DOT_SIZE*(random(FRAME_LEFT/DOT_SIZE, (SCREEN_WIDTH-FRAME_RIGHT-DOT_SIZE)/DOT_SIZE));
         y = DOT_SIZE*(random(FRAME_UP/DOT_SIZE, (SCREEN_HEIGHT-FRAME_DOWN-DOT_SIZE)/DOT_SIZE));
-    }
-
-    void random_generate_classic (Snake snake)
-    {
-        x = DOT_SIZE*(random(FRAME_LEFT/DOT_SIZE, (SCREEN_WIDTH-FRAME_RIGHT-DOT_SIZE)/DOT_SIZE));
-        y = DOT_SIZE*(random(FRAME_UP/DOT_SIZE, (SCREEN_HEIGHT-FRAME_DOWN-DOT_SIZE)/DOT_SIZE));
-        if (checkEmpty_forFood(x,y,snake)==false) {
-             random_generate_classic(snake);
+        if (checkEmpty(x,y,snake)==false) {
+             random_generate(snake);
         }
     }
 
-    void random_generate_modern(Snake snake, vector<Obstacle> obstacles)
+    void random_generate(Snake snake, vector<Obstacle> obstacles)
     {
         x = DOT_SIZE*(random(6,58));
         y = DOT_SIZE*(random(8,42));
-        if (checkEmpty_forFood(x,y,snake,obstacles)==false) {
-            random_generate_modern(snake,obstacles);
+        if (checkEmpty(x,y,snake,obstacles)==false) {
+            random_generate(snake,obstacles);
         }
     }
-    void random_generate_svs (Snake snake1, Snake snake2)
+    void random_generate (Snake snake1, Snake snake2)
     {
         x = DOT_SIZE*(random(FRAME_LEFT/DOT_SIZE, (SCREEN_WIDTH-FRAME_RIGHT-DOT_SIZE)/DOT_SIZE));
         y = DOT_SIZE*(random(FRAME_UP/DOT_SIZE, (SCREEN_HEIGHT-FRAME_DOWN-DOT_SIZE)/DOT_SIZE));
-        if (checkEmpty_forFood(x,y,snake1)==false || checkEmpty_forFood(x,y,snake2)==false) {
-            random_generate_svs(snake1, snake2);
+        if (checkEmpty(x,y,snake1)==false || checkEmpty(x,y,snake2)==false) {
+            random_generate(snake1, snake2);
         }
     }
 
-    void random_food_type ()
+    void random_food_type()
     {
         int i = random(0,19);
         current_index_food_type = RANDOM_FOOD_POSSIBILITY[i];
@@ -101,3 +95,4 @@ struct Food
     }
 
 };
+
