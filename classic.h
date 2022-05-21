@@ -10,13 +10,13 @@ void classic ()
     Snake snake;
     init_game(snake,FRAME_LEFT+40,FRAME_UP+10,FRAME_LEFT+30,FRAME_UP+10,FRAME_LEFT+20,FRAME_UP+10,FRAME_LEFT+10,FRAME_UP+10);
     Food food;
-    food.random_generate_classic(snake);
+    food.random_generate(snake);
 
     int current_number_of_bombs = 0;
     Bomb bombs [20];
     for (int i=0; i<20; ++i)
     {
-        bombs[i].random_generate_classic(snake);
+        bombs[i].random_generate(snake);
         bombs[i].load_image(renderer);  // load cả 2 ảnh
     }
 
@@ -37,11 +37,11 @@ void classic ()
             food_index = food.current_index_food_type;
             cout << "Score: " << snake.score << endl;
             snake.update();  // tăng kích thước rắn
-            food.random_generate_classic(snake);   // random vị trí thức ăn
+            food.random_generate(snake);   // random vị trí thức ăn
             food.random_food_type();  // random loại thức ăn
             for (int i=0; i<current_number_of_bombs; ++i) // random bomb
             {
-                bombs[i].random_generate_classic(snake);
+                bombs[i].random_generate(snake);
                 bombs[i].random_bomb_type();
             }
          }
@@ -60,7 +60,7 @@ void classic ()
                 y_exp = bombs[i].y;
                 for (int i=0; i<current_number_of_bombs; ++i)
                 {
-                  bombs[i].random_generate_classic(snake);
+                  bombs[i].random_generate(snake);
                   bombs[i].random_bomb_type();
                 }
                 break;
@@ -109,3 +109,4 @@ void classic ()
     }
     cout << "Game Over";
 }
+
