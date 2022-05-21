@@ -72,6 +72,17 @@ struct Game
         SDL_RenderCopy(renderer,texture_font,nullptr,&rect);
     }
 
+    void draw_timer (Uint8 r, Uint8 g, Uint8 b, int x, int y, int w, int h,
+                     Uint32 start_time, Uint32 current_time, SDL_Renderer* renderer, TTF_Font *gFont) // snake vs snake
+    {
+        string s = "Time: " + to_string(10 - (current_time - start_time)/1000);
+        gFont = TTF_OpenFont("Font/zxzxzx.ttf", 28);
+        SDL_Color textColor = {r,g,b};
+        texture_font = loadFromRenderedText (s, textColor, renderer, gFont);
+        SDL_Rect rect = {x,y,w,h};
+        SDL_RenderCopy(renderer, texture_font, nullptr, &rect);
+    }
+
     void draw_banner (Uint8 r, Uint8 g, Uint8 b, string title, SDL_Renderer* renderer, TTF_Font *gFont)
     {
         gFont = TTF_OpenFont( "Font/pacfont.ttf", 28 );
@@ -134,3 +145,4 @@ struct Game
        else return false;
     }
 };
+
