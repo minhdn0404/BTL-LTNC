@@ -1,86 +1,67 @@
 
 #pragma once
 #include "random.h"
-#include "Food.h"
 
-struct Bomb
+struct Obstacle
 {
     int x;
     int y;
-    SDL_Texture* blue_bomb_texture;
-    SDL_Texture* red_bomb_texture;
-    SDL_Texture* explode_texture;
-    string bomb_type [NUMBER_OF_BOMB];
-    int current_index_bomb_type; // 0/1
+    int bsize;
+    Obstacle ()
+    {
+        x = -1;
+        y = -1;
+        bsize = DOT_SIZE;
+    }
+    void random_generate (int row_state)
+    {
+        // 50 <= x <=570
+        // 5 <= x0 <=57
+        int x0 = random(5,57);
+        x = DOT_SIZE*x0;
+        if (row_state == 1) // odd
+        {
+            // 70 <= y <= 410
+            // 7 <= y0 <=41
+            int y0 = random(3,20);
+            y0 = y0*2+1;
+            y = DOT_SIZE*y0;
+        }
+        else { // even
+            // 80 <= y <= 420
+            // 8 <= y0 <=42
+            int y0 = random(4,21);
+            y0 = y0*2;
+            y = DOT_SIZE*y0;
+        }
+    }
 
-    Bomb ()
-    {
-        bomb_type[0] = BLUE_BOMB_PATH;
-        bomb_type[1] = RED_BOMB_PATH;
-        x = 0;
-        y = 0;
-        random_bomb_type();
-    }
-    ~Bomb ()
-    {
-        SDL_DestroyTexture(blue_bomb_texture);
-        SDL_DestroyTexture(red_bomb_texture);
-        blue_bomb_texture = nullptr;
-        red_bomb_texture = nullptr;
-    }
-    void random_generate()
-    {
-        x = DOT_SIZE*(random(FRAME_LEFT/DOT_SIZE, (SCREEN_WIDTH-FRAME_RIGHT-DOT_SIZE)/DOT_SIZE));
-        y = DOT_SIZE*(random(FRAME_UP/DOT_SIZE, (SCREEN_HEIGHT-FRAME_DOWN-DOT_SIZE)/DOT_SIZE));
-    }
-
-    bool checkEmpty_forBomb (int x, int y, Snake snake)
+    bool checkEmpty (int x_, int y_,Snake snake)
     {
         for (int i=0; i<snake.body.size(); ++i)
         {
-            if (x == snake.body[i].x && y == snake.body[i].y) return false;
+            if (x_ == snake.body[i].x && y_ == snake.body[i].y) return false;
         }
         return true;
     }
 
-    void random_generate_classic (Snake snake)
+    void random_generate (int row_state,Snake snake)
     {
-        x = DOT_SIZE*(random(FRAME_LEFT/DOT_SIZE, (SCREEN_WIDTH-FRAME_RIGHT-DOT_SIZE)/DOT_SIZE));
-        y = DOT_SIZE*(random(FRAME_UP/DOT_SIZE, (SCREEN_HEIGHT-FRAME_DOWN-DOT_SIZE)/DOT_SIZE));
-        if (checkEmpty_forBomb(x,y,snake)==false) {
-             random_generate_classic(snake);
-        }
+        random_generate(row_state);
+        if (checkEmpty(x,y,snake) == false) random_generate(row_state,snake);
     }
-    void random_generate_svs (Snake snake1, Snake snake2)
+    void draw (Uint8 r, Uint8 g,Uint8 b, SDL_Renderer* renderer)
     {
-        x = DOT_SIZE*(random(FRAME_LEFT/DOT_SIZE, (SCREEN_WIDTH-FRAME_RIGHT-DOT_SIZE)/DOT_SIZE));
-        y = DOT_SIZE*(random(FRAME_UP/DOT_SIZE, (SCREEN_HEIGHT-FRAME_DOWN-DOT_SIZE)/DOT_SIZE));
-        if (checkEmpty_forBomb(x,y,snake1)==false || checkEmpty_forBomb(x,y,snake2)==false) {
-             random_generate_svs(snake1,snake2);
-        }
+       SDL_SetRenderDrawColor(renderer,r,g,b,255);
+       SDL_Rect dot = {x,y,bsize,bsize};
+       SDL_RenderFillRect(renderer,&dot);
     }
 
-    void random_bomb_type ()
+    bool is_collided_by (Snake snake)
     {
-        int i = random(0,9);
-        current_index_bomb_type = RANDOM_BOMB_POSSIBILITY[i];
+        if (snake.body[0].x == x && snake.body[0].y == y) return true;
+        else return false;
     }
 
-    void load_image (SDL_Renderer* renderer)
-    {
-        blue_bomb_texture = loadTexture(bomb_type[0], renderer);
-        red_bomb_texture = loadTexture(bomb_type[1], renderer);
-    }
-    void draw_bomb (SDL_Renderer* renderer) // 0 <= i <= 1
-    {
-        SDL_Rect dot = {x,y,DOT_SIZE+5,DOT_SIZE+5};
-        if (current_index_bomb_type ==0) SDL_RenderCopy(renderer,blue_bomb_texture,nullptr,&dot);
-        else SDL_RenderCopy(renderer,red_bomb_texture,nullptr,&dot);
-    }
-
-    bool is_eaten_by (Snake snake)
-    {
-       if (x==snake.body[0].x && y==snake.body[0].y) return true;
-       else return false;
-    }
 };
+
