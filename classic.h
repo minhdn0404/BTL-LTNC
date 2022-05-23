@@ -3,6 +3,7 @@
 #include "timer.h"
 #include "random.h"
 #include <vector>
+#include "outro.h"
 
 void classic ()
 {
@@ -107,6 +108,7 @@ void classic ()
          }
 
     }
-    cout << "Game Over";
+
+    classic_outro(snake.score,renderer);
 }
 
