@@ -46,4 +46,22 @@ const int RANDOM_BOMB_POSSIBILITY [10] = {0,0,0,0,0,0,0,1,1,1};
    30% red bomb   -5
 */
 
+const int MOUSE_OUT = 0;
+const int MOUSE_OVER = 1;
+const int MOUSE_DOWN = 2;
+const int MOUSE_UP = 3;
+const int TOTAL_MOUSE_STATE = 4;
+
+const string OUT_PLAY_BUTTON = "Background/out_play_button.png"; // 246, 249, 11 (RGB)
+const string OVER_PLAY_BUTTON = "Background/over_play_button.png"; // 209 192 35 (RGB)
+const string OUT_CLASSIC_BUTTON = "Background/classic_button.png";
+const string OVER_CLASSIC_BUTTON = "Background/over_classic_button.png";
+const string OUT_MODERN_BUTTON = "Background/modern_button.png";
+const string OVER_MODERN_BUTTON = "Background/over_modern_button.png";
+const string OUT_SVS_BUTTON = "Background/svs_button.png";
+const string OVER_SVS_BUTTON = "Background/over_svs_button.png";
+
+
+
 #endif // TOOLS_H
+
