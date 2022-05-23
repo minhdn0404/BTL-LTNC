@@ -1,5 +1,4 @@
 
-
 #pragma once
 #include "obstacle.h"
 
@@ -42,7 +41,6 @@ void modern ()
          if (eat_food_check = 1) {
             new_game.draw_updated_score(1,food_index,255,0,0,SCREEN_WIDTH - 60, 20, 50, 50,renderer, gFont);
          }
-         //new_game.draw_updated_score(1,RANDOM_FOOD_POSSIBILITY[index_food_path],255,0,0,SCREEN_WIDTH - 60, 20, 50, 50,renderer, gFont);
          snake.draw(0,255,0,"Background/green_head.png",renderer);
 
          for (int i=0; i<obstacles.size(); ++i)
@@ -68,6 +66,5 @@ void modern ()
             }
          }
     }
-    cout << "Game Over";
+    modern_outro(snake.score,renderer);
 }
-
