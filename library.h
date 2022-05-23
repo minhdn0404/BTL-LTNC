@@ -1,0 +1,25 @@
+
+#include <iostream>
+#include <SDL.h>
+#include <SDL_ttf.h>
+#include <SDL_image.h>
+#include <string>
+#include <vector>
+#include <ctime>
+#include "tools.h"
+#include "other.h"
+#include "SDL_util.h"
+#include "Dot.h"
+#include "Snake.h"
+#include "Food.h"
+#include "Bomb.h"
+#include "Game.h"
+#include "init.h"
+#include "classic.h"
+#include "modern.h"
+#include "snake_vs_snake.h"
+#include "timer.h"
+#include "obstacle.h"
+#include "Button.h"
+#include "intro.h"
+#include "outro.h"
