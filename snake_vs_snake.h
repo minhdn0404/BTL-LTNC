@@ -144,15 +144,16 @@ void snake_vs_snake ()
          }
     }
 
+
     if (snake1.score == MAX_SCORE || snake2.score == MAX_SCORE)
     {
-        if (snake1.score > snake2.score) cout << "Snake 1 win" << endl;
-        else cout << "Snake 2 win" << endl;
+        if (snake1.score > snake2.score) snake_vs_snake_outro(snake1,1);
+        else snake_vs_snake_outro(snake2,2);
     }
     else {
-        if (snake1.eat_other(snake2)==true) cout << "Snake 2 win" << endl;
-        else if (snake2.eat_other(snake1) == true) cout << "Snake 1 win" << endl;
+        if (snake1.eat_other(snake2)==true) snake_vs_snake_outro(snake2,2);
+        else if (snake2.eat_other(snake1) == true) snake_vs_snake_outro(snake1,1);
      }
-    cout << "Game Over";
 }
+
 
