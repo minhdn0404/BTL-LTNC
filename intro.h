@@ -20,13 +20,6 @@ void intro ()
         SDL_RenderPresent(renderer);
         SDL_Delay(50);
     }
-    cout << "Rect: " << rect.x << " " << rect.y << endl;
-
-//    intro_background = loadTexture(OUT_PLAY_BUTTON, renderer);
-//    SDL_Rect rect1 = {SCREEN_WIDTH/3+5,SCREEN_HEIGHT/3+60,220,100};
-//    SDL_RenderCopy(renderer,intro_background,nullptr,&rect1);
-//    SDL_RenderPresent(renderer);
-
     SDL_DestroyTexture(intro_background);
     intro_background = nullptr;
     SDL_DestroyTexture(title);
@@ -73,4 +66,5 @@ void down_mouse_intro (Button play_button)
     SDL_DestroyTexture(title);
     title = nullptr;
 }
+
 
