@@ -36,7 +36,6 @@ void classic ()
             eat_food_check = 1;
             eat_bomb_check = 0;
             food_index = food.current_index_food_type;
-            cout << "Score: " << snake.score << endl;
             snake.update();  // tăng kích thước rắn
             food.random_generate(snake);   // random vị trí thức ăn
             food.random_food_type();  // random loại thức ăn
@@ -55,7 +54,6 @@ void classic ()
                 snake.decrease_score(bombs[i].current_index_bomb_type);  // trừ điểm dựa vào loại bomb
                 eat_bomb_check = 1;
                 eat_food_check = 0;
-                cout << "Score: " << snake.score << endl;
                 bomb_index = bombs[i].current_index_bomb_type;
                 x_exp = bombs[i].x;
                 y_exp = bombs[i].y;
