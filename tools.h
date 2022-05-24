@@ -7,10 +7,6 @@
 #include <string>
 using namespace std;
 
-//SDL_Window* window = nullptr;
-//SDL_Renderer* renderer = nullptr;
-//TTF_Font *gFont = nullptr;
-
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 const int SCREEN_FPS = 100;
