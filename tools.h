@@ -56,8 +56,15 @@ const string OUT_MODERN_BUTTON = "Background/modern_button.png";
 const string OVER_MODERN_BUTTON = "Background/over_modern_button.png";
 const string OUT_SVS_BUTTON = "Background/svs_button.png";
 const string OVER_SVS_BUTTON = "Background/over_svs_button.png";
-
-
+const string OUT_NEXT_BUTTON = "Background/out_next_button.png";
+const string OVER_NEXT_BUTTON = "Background/over_next_button.png";
+const string OUT_PLAY_AGAIN_BUTTON = "Background/out_play_again_button.png";
+const string OVER_PLAY_AGAIN_BUTTON = "Background/over_play_again_button.png";
+const string OUT_QUIT_BUTTON = "Background/out_quit_button.png";
+const string OVER_QUIT_BUTTON = "Background/over_quit_button.png";
+const string OUT_MENU_BUTTON = "Background/out_menu_button.png";
+const string OVER_MENU_BUTTON = "Background/over_menu_button.png";
 
 #endif // TOOLS_H
+
 
