@@ -34,9 +34,7 @@ void snake_vs_snake ()
         int food_index;
         if (food.is_eaten_by(snake1)==true ) {
             snake1.increase_score(RANDOM_FOOD_POSSIBILITY[index_food_path]);  // tăng điểm dựa vào thức ăn
-            cout << "Score1: " << snake1.score << endl;
             start_time = SDL_GetTicks();
-            cout << "Current Time: " << start_time << endl;
             snake1.update();  // tăng kích thước rắn
             index_food_path = random(0,19);
             food.random_generate(snake1,snake2);   // random thức ăn
@@ -49,9 +47,7 @@ void snake_vs_snake ()
          }
         if (food.is_eaten_by(snake2)==true ) {
             snake2.increase_score(RANDOM_FOOD_POSSIBILITY[index_food_path]);  // tăng điểm dựa vào thức ăn
-            cout << "Score2: " << snake2.score << endl;
             start_time = SDL_GetTicks();
-            cout << "Current Time: " << start_time << endl;
             snake2.update();  // tăng kích thước rắn
             index_food_path = random(0,19);
             food.random_generate(snake1,snake2);   // random thức ăn
@@ -70,7 +66,6 @@ void snake_vs_snake ()
          for (int i=0; i<current_number_of_bombs; ++i) {
             if (bombs[i].is_eaten_by(snake1)) {
                 snake1.decrease_score(bombs[i].current_index_bomb_type);  // trừ điểm dựa vào loại bomb
-                cout << "Score: " << snake1.score << endl;
                 bomb_index = bombs[i].current_index_bomb_type;
                 x_exp = bombs[i].x;
                 y_exp = bombs[i].y;
@@ -83,7 +78,6 @@ void snake_vs_snake ()
             }
             if (bombs[i].is_eaten_by(snake2)) {
                 snake2.decrease_score(bombs[i].current_index_bomb_type);  // trừ điểm dựa vào loại bomb
-                cout << "Score: " << snake2.score << endl;
                 bomb_index = bombs[i].current_index_bomb_type;
                 x_exp = bombs[i].x;
                 y_exp = bombs[i].y;
@@ -102,7 +96,6 @@ void snake_vs_snake ()
             index_food_path = random(0,19);
             food.random_generate(snake1,snake2);   // random thức ăn
             food.random_food_type();
-            cout << "Out of time" << endl;
          }
 
         SDL_SetRenderDrawColor(renderer,255,255,255,255);
