@@ -20,7 +20,6 @@ void modern ()
          if (food.is_eaten_by(snake)==true) {
             eat_food_check = 1;
             snake.increase_score(food.current_index_food_type);  // tăng điểm dựa vào thức ăn
-            cout << "Score: " << snake.score << endl;
             snake.update();  // tăng kích thước rắn
             food_index = food.current_index_food_type;
             food.random_generate(snake,obstacles);   // random thức ăn
@@ -29,7 +28,6 @@ void modern ()
             Obstacle obs;
             obs.random_generate(row_state,snake);
             obstacles.push_back(obs);
-            cout << "Size: " << obstacles.size() << endl;
          }
 
          SDL_SetRenderDrawColor(renderer,255,255,255,255);
