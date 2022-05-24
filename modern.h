@@ -65,4 +65,6 @@ void modern ()
          }
     }
     modern_outro(snake.score,renderer);
+
 }
+
