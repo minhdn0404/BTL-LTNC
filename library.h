@@ -23,3 +23,6 @@
 #include "Button.h"
 #include "intro.h"
 #include "outro.h"
+#include "run.h"
+#include "next.h"
+#include "end.h"
