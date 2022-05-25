@@ -20,10 +20,10 @@ int main (int argc, char* argv[])
     bool program = true;
     while (program)
     {
+    flag0:
         bool check_classic = false;
         bool check_modern = false;
         bool check_svs = false;
-    flag0:
         run(check_mode, check_classic, check_modern, check_svs);
 
         if (check_classic == true) goto flag1;
